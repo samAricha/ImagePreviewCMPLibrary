@@ -14,6 +14,7 @@ import imagepreviewcmplibrary.sample.composeapp.generated.resources.organiks_egg
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import rg.teka.image_preview_cmp_library.BuildKonfig
 
 
 @OptIn(ExperimentalResourceApi::class)
@@ -30,8 +31,14 @@ fun App() {
                 val greeting = remember { Greeting().greet() }
                 Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
 //                    Image(painterResource(Res.drawable.compose_multiplatform), null)
+//                    ImagePreview(painterResource(Res.drawable.organiks_egg))
                     ImagePreview(painterResource(Res.drawable.organiks_egg))
-                    Text("Compose: $greeting")
+                    val password = BuildKonfig.SONATYPE_PASSWORD
+                    val username = BuildKonfig.SONATYPE_USERNAME
+
+                    Text("Compose: $greeting ")
+                    Text("env: $password ")
+                    Text("env: $username ")
                 }
             }
         }

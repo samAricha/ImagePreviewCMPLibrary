@@ -17,6 +17,7 @@ kotlin = "1.9.22"
 vanniktech = "0.28.0"
 nmcp = "0.0.4"
 dokka = "1.9.20"
+buildKofig = "0.15.1"
 
 
 [libraries]
@@ -41,3 +42,5 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 mavenPublishVanniktech = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech" }
 nmcp = { id = "com.gradleup.nmcp", version.ref = "nmcp" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
+buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKofig" }

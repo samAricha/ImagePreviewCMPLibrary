@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
@@ -9,6 +10,8 @@ plugins {
     alias(libs.plugins.nmcp)
     alias(libs.plugins.mavenPublishVanniktech)
     alias(libs.plugins.dokka)
+    id("signing")
+    alias(libs.plugins.buildKonfig) apply true
 
 }
 
@@ -19,6 +22,7 @@ kotlin {
                 jvmTarget = "11"
             }
         }
+        publishLibraryVariants("release")
     }
     
     jvm("desktop")
@@ -49,22 +53,22 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    sourceSets["main"].res.srcDirs("src/androidMain/res")
-    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+//    sourceSets["main"].res.srcDirs("src/androidMain/res")
+//    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
+//    packaging {
+//        resources {
+//            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+//        }
+//    }
+//    buildTypes {
+//        getByName("release") {
+//            isMinifyEnabled = false
+//        }
+//    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -85,6 +89,10 @@ compose.desktop {
         }
     }
 }
+
+group = "io.github.samaricha"
+version = "0.0.1"
+//version = properties["version"] as String
 
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
@@ -127,8 +135,27 @@ mavenPublishing {
 nmcp {
     publishAllPublications {
         // get from ~/.gradle/gradle.properties (HOME/.gradle/gradle.properties)
-        username = System.getenv("MAVEN_CENTRAL_USERNAME")
-        password = System.getenv("MAVEN_CENTRAL_PASSWORD")
+        username = gradleLocalProperties(rootDir).getProperty("SONATYPE_USERNAME")
+        password = gradleLocalProperties(rootDir).getProperty("SONATYPE_PASSWORD")
         publicationType = "AUTOMATIC"
+    }
+}
+
+
+buildkonfig {
+    packageName = "org.teka.image_preview_cmp_library"
+
+    defaultConfigs {
+        val apiKey: String = gradleLocalProperties(rootDir).getProperty("API_KEY")
+        val sonatypeUsername: String = gradleLocalProperties(rootDir).getProperty("SONATYPE_USERNAME")
+        val sonatypePassword: String = gradleLocalProperties(rootDir).getProperty("SONATYPE_PASSWORD")
+
+        require(apiKey.isNotEmpty()) {
+            "Register your api key from developer and place it in local.properties as `API_KEY`"
+        }
+
+        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "API_KEY", apiKey)
+        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "SONATYPE_USERNAME", sonatypeUsername)
+        buildConfigField(com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING, "SONATYPE_PASSWORD", sonatypePassword)
     }
 }
